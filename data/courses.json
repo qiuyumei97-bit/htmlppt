@@ -1,0 +1,19 @@
+{
+    "grades": [
+        {"id": "grade1", "name": "一年级", "description": "探索知识的起点"},
+        {"id": "grade2", "name": "二年级", "description": "夯实基础，稳步成长"},
+        {"id": "grade3", "name": "三年级", "description": "拓展视野，探索新知"},
+        {"id": "grade4", "name": "四年级", "description": "深化学习，提升能力"},
+        {"id": "grade5", "name": "五年级", "description": "知识积累，厚积薄发"},
+        {"id": "grade6", "name": "六年级", "description": "毕业前夕，整装待发"}
+    ],
+    "courses": [
+        {"id": "sample1", "title": "认识数字1-10", "grade": "grade1", "subject": "数学", "createdAt": "2024-01-15", "filePath": "courses/grade1/sample1/index.html"},
+        {"id": "sample2", "title": "加法运算入门", "grade": "grade2", "subject": "数学", "createdAt": "2024-01-16", "filePath": "courses/grade2/sample2/index.html"},
+        {"id": "sample3", "title": "乘法口诀表", "grade": "grade3", "subject": "数学", "createdAt": "2024-01-17", "filePath": "courses/grade3/sample3/index.html"},
+        {"id": "ai-intro", "title": "初识人工智能", "grade": "grade3", "subject": "信息科技", "createdAt": "2024-01-21", "filePath": "courses/grade3/ai-intro/index.html"},
+        {"id": "sample4", "title": "认识方向", "grade": "grade4", "subject": "数学", "createdAt": "2024-01-18", "filePath": "courses/grade4/sample4/index.html"},
+        {"id": "sample5", "title": "三角形认识", "grade": "grade5", "subject": "数学", "createdAt": "2024-01-19", "filePath": "courses/grade5/sample5/index.html"},
+        {"id": "sample6", "title": "圆的周长与面积", "grade": "grade6", "subject": "数学", "createdAt": "2024-01-20", "filePath": "courses/grade6/sample6/index.html"}
+    ]
+}

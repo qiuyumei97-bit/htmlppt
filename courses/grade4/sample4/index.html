@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>认识方向</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .compass {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 30px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            position: relative;
+            border: 4px solid rgba(255,255,255,0.5);
+        }
+        .direction {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .direction.north { top: 10px; left: 50%; transform: translateX(-50%); }
+        .direction.south { bottom: 10px; left: 50%; transform: translateX(-50%); }
+        .direction.east { right: 15px; top: 50%; transform: translateY(-50%); }
+        .direction.west { left: 15px; top: 50%; transform: translateY(-50%); }
+        .arrow {
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.5); }
+        }
+        .directions-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .dir-card {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .dir-card:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-3px);
+        }
+        .dir-card h3 {
+            margin: 0 0 10px 0;
+        }
+        .dir-card p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧭 认识方向</h1>
+        <div class="compass">
+            <div class="direction north">北 ↑</div>
+            <div class="direction south">南 ↓</div>
+            <div class="direction east">东 →</div>
+            <div class="direction west">西 ←</div>
+            <div class="arrow"></div>
+        </div>
+        <div class="directions-list">
+            <div class="dir-card">
+                <h3>☀️ 早晨</h3>
+                <p>太阳从东方升起</p>
+            </div>
+            <div class="dir-card">
+                <h3>🌙 傍晚</h3>
+                <p>太阳从西方落下</p>
+            </div>
+            <div class="dir-card">
+                <h3>❄️ 冬天</h3>
+                <p>北风呼呼地吹</p>
+            </div>
+            <div class="dir-card">
+                <h3>🌡️ 夏天</h3>
+                <p>南风带来温暖</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        window.play = function() {
+            const cards = document.querySelectorAll('.dir-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.background = 'rgba(255,255,255,0.4)';
+                    setTimeout(() => {
+                        card.style.background = 'rgba(255,255,255,0.2)';
+                    }, 300);
+                }, index * 400);
+            });
+        };
+        window.pause = function() {};
+        window.prev = function() {};
+        window.next = function() {};
+    </script>
+</body>
+</html>

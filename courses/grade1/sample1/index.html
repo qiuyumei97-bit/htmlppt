@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>认识数字1-10</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .numbers {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+        .number-card {
+            background: rgba(255,255,255,0.2);
+            padding: 30px 20px;
+            border-radius: 15px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .number-card:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        .description {
+            margin-top: 40px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔢 认识数字1-10</h1>
+        <div class="numbers">
+            <div class="number-card">1️⃣</div>
+            <div class="number-card">2️⃣</div>
+            <div class="number-card">3️⃣</div>
+            <div class="number-card">4️⃣</div>
+            <div class="number-card">5️⃣</div>
+            <div class="number-card">6️⃣</div>
+            <div class="number-card">7️⃣</div>
+            <div class="number-card">8️⃣</div>
+            <div class="number-card">9️⃣</div>
+            <div class="number-card">🔟</div>
+        </div>
+        <div class="description">
+            <p>小朋友们好！让我们一起认识这些数字吧！</p>
+            <p>点击数字卡片可以看到有趣的动画哦~</p>
+        </div>
+    </div>
+    <script>
+        const cards = document.querySelectorAll('.number-card');
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                card.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    card.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+        window.play = function() {
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        card.style.transform = 'scale(1)';
+                    }, 300);
+                }, index * 200);
+            });
+        };
+        window.pause = function() {};
+        window.prev = function() {};
+        window.next = function() {};
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圆的周长与面积</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        .circle-demo {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0 auto 30px;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .radius-line {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: rgba(255,255,255,0.8);
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+        }
+        .radius-label {
+            position: absolute;
+            top: 50px;
+            left: 55%;
+            color: white;
+            font-size: 0.8rem;
+            transform: rotate(90deg);
+        }
+        .formulas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .formula-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .formula-card h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        .formula {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .formula-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .calculator {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+        .calculator input {
+            width: 200px;
+            padding: 12px;
+            font-size: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        .calculator button {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .calculator button:hover {
+            background: #5a6fd6;
+            transform: translateY(-2px);
+        }
+        .results {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        .result-item {
+            text-align: left;
+        }
+        .result-item span {
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚪ 圆的周长与面积</h1>
+        <div class="circle-demo">
+            <div class="circle">
+                <div class="radius-line"></div>
+                <div class="radius-label">半径 r</div>
+            </div>
+            <p>圆是平面上到定点距离等于定长的所有点组成的图形</p>
+        </div>
+        <div class="formulas">
+            <div class="formula-card">
+                <h3>周长公式</h3>
+                <div class="formula">C = 2πr</div>
+                <div class="formula-description">C代表周长，r代表半径，π≈3.14</div>
+            </div>
+            <div class="formula-card">
+                <h3>面积公式</h3>
+                <div class="formula">S = πr²</div>
+                <div class="formula-description">S代表面积，r代表半径，π≈3.14</div>
+            </div>
+        </div>
+        <div class="calculator">
+            <h3>计算器</h3>
+            <input type="number" id="radius" placeholder="输入半径" value="5">
+            <button onclick="calculate()">计算</button>
+            <div class="results" id="results">
+                <div class="result-item">周长：<span id="circumference">-</span></div>
+                <div class="result-item">面积：<span id="area">-</span></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function calculate() {
+            const radius = parseFloat(document.getElementById('radius').value);
+            if (isNaN(radius) || radius <= 0) {
+                alert('请输入有效的半径值');
+                return;
+            }
+            const pi = 3.14159;
+            const circumference = (2 * pi * radius).toFixed(2);
+            const area = (pi * radius * radius).toFixed(2);
+            document.getElementById('circumference').textContent = circumference;
+            document.getElementById('area').textContent = area;
+        }
+        window.play = function() {
+            calculate();
+        };
+        window.pause = function() {};
+        window.prev = function() {};
+        window.next = function() {};
+    </script>
+</body>
+</html>
