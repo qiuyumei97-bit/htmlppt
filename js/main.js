@@ -1,5 +1,7 @@
 const STORAGE_KEY = 'html_courses_data';
 const DATA_URL = 'data/courses.json';
+const PASSWORD_KEY = 'html_courses_password';
+const AUTH_KEY = 'html_courses_auth';
 let allData = null;
 
 const DEFAULT_DATA = {
@@ -24,7 +26,7 @@ const DEFAULT_DATA = {
 
 async function loadData() {
     if (allData) return allData;
-    
+
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
         try {
@@ -32,7 +34,7 @@ async function loadData() {
             return allData;
         } catch (e) { /* ignore */ }
     }
-    
+
     try {
         const resp = await fetch(DATA_URL);
         if (resp.ok) {
@@ -41,7 +43,7 @@ async function loadData() {
             return allData;
         }
     } catch (e) { /* offline fallback */ }
-    
+
     allData = JSON.parse(JSON.stringify(DEFAULT_DATA));
     saveData();
     return allData;
@@ -405,10 +407,106 @@ function deleteGrade(id) {
     updateGradeSelect();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function injectPasswordOverlay() {
+    const overlay = document.createElement('div');
+    overlay.id = 'passwordOverlay';
+    overlay.innerHTML = `
+        <style>
+            #passwordOverlay { position:fixed; inset:0; z-index:99999; background:linear-gradient(135deg,#1e40af 0%,#3b82f6 100%); display:flex; align-items:center; justify-content:center; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+            #passwordOverlay .p-box { background:white; border-radius:16px; padding:40px; width:380px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.3); text-align:center; }
+            #passwordOverlay .p-logo { font-size:3rem; color:#3b82f6; margin-bottom:12px; }
+            #passwordOverlay h2 { font-size:1.5rem; color:#1e293b; margin:0 0 4px 0; }
+            #passwordOverlay .p-desc { color:#64748b; font-size:0.9rem; margin-bottom:24px; }
+            #passwordOverlay .p-input { width:100%; padding:14px 16px; border:2px solid #e2e8f0; border-radius:10px; font-size:1rem; transition:border-color 0.2s; box-sizing:border-box; }
+            #passwordOverlay .p-input:focus { outline:none; border-color:#3b82f6; }
+            #passwordOverlay .p-btn { width:100%; padding:14px; background:linear-gradient(135deg,#3b82f6 0%,#1e40af 100%); color:white; border:none; border-radius:10px; font-size:1rem; font-weight:600; cursor:pointer; margin-top:16px; transition:transform 0.2s; }
+            #passwordOverlay .p-btn:hover { transform:translateY(-2px); }
+            #passwordOverlay .p-err { color:#ef4444; font-size:0.85rem; margin-top:12px; display:none; }
+            #passwordOverlay .p-set-hint { color:#94a3b8; font-size:0.8rem; margin-top:12px; }
+        </style>
+        <div class="p-box">
+            <div class="p-logo">🔒</div>
+            <h2 id="pTitle">设置密码</h2>
+            <p class="p-desc" id="pDesc">首次使用，请设置访问密码</p>
+            <input type="password" id="pInput" class="p-input" placeholder="请输入密码" autocomplete="off">
+            <input type="password" id="pInput2" class="p-input" style="display:none;margin-top:12px" placeholder="再次输入密码" autocomplete="off">
+            <button id="pBtn" class="p-btn">确认</button>
+            <p class="p-err" id="pErr"></p>
+            <p class="p-set-hint" id="pHint">关闭页面后需重新输入密码</p>
+        </div>
+    `;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.appendChild(overlay);
+
+    const hasPassword = localStorage.getItem(PASSWORD_KEY);
+
+    if (hasPassword) {
+        document.getElementById('pTitle').textContent = '输入密码';
+        document.getElementById('pDesc').textContent = '请输入密码以访问课件库';
+        document.getElementById('pInput').placeholder = '请输入密码';
+        document.getElementById('pInput2').style.display = 'none';
+        document.getElementById('pHint').textContent = '关闭页面后需重新输入密码';
+
+        document.getElementById('pBtn').onclick = () => {
+            const input = document.getElementById('pInput').value;
+            if (btoa(input) === hasPassword) {
+                sessionStorage.setItem(AUTH_KEY, '1');
+                document.getElementById('passwordOverlay').remove();
+                document.documentElement.style.overflow = '';
+                initCurrentPage();
+            } else {
+                const err = document.getElementById('pErr');
+                err.textContent = '密码错误，请重试';
+                err.style.display = 'block';
+                document.getElementById('pInput').value = '';
+                document.getElementById('pInput').focus();
+            }
+        };
+        document.getElementById('pInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('pBtn').click();
+        });
+    } else {
+        document.getElementById('pTitle').textContent = '设置密码';
+        document.getElementById('pDesc').textContent = '首次使用，请设置访问密码';
+        document.getElementById('pInput').placeholder = '请输入密码';
+        document.getElementById('pInput2').style.display = 'block';
+        document.getElementById('pInput2').placeholder = '再次输入密码';
+
+        document.getElementById('pBtn').onclick = () => {
+            const p1 = document.getElementById('pInput').value;
+            const p2 = document.getElementById('pInput2').value;
+            const err = document.getElementById('pErr');
+            if (!p1) { err.textContent = '请输入密码'; err.style.display = 'block'; return; }
+            if (p1.length < 4) { err.textContent = '密码长度至少4位'; err.style.display = 'block'; return; }
+            if (p1 !== p2) { err.textContent = '两次密码不一致'; err.style.display = 'block'; return; }
+            localStorage.setItem(PASSWORD_KEY, btoa(p1));
+            sessionStorage.setItem(AUTH_KEY, '1');
+            document.getElementById('passwordOverlay').remove();
+            document.documentElement.style.overflow = '';
+            initCurrentPage();
+        };
+        document.getElementById('pInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('pBtn').click();
+        });
+        document.getElementById('pInput2').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('pBtn').click();
+        });
+    }
+}
+
+function initCurrentPage() {
     const cls = document.body.classList;
     if (cls.contains('home-page')) initHomePage();
     else if (cls.contains('courses-page')) initCoursesPage();
     else if (cls.contains('player-page')) initPlayerPage();
     else if (cls.contains('manage-page')) initManagePage();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const authed = sessionStorage.getItem(AUTH_KEY);
+    if (authed) {
+        initCurrentPage();
+    } else {
+        injectPasswordOverlay();
+    }
 });
