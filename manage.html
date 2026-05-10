@@ -61,9 +61,9 @@
                                 <input type="text" id="subject" name="subject" required placeholder="如：数学、语文、英语">
                             </div>
                             <div class="form-group">
-                                <label for="courseFile">课件文件</label>
-                                <input type="file" id="courseFile" name="courseFile" accept=".html,.zip" multiple>
-                                <p class="help-text">支持上传HTML文件或包含HTML资源的ZIP压缩包</p>
+                                <label for="courseFile">课件文件（.html）</label>
+                                <input type="file" id="courseFile" name="courseFile" accept=".html,.htm">
+                                <p class="help-text">选择做好的 HTML 课件文件上传，系统会自动存储并支持播放与全屏</p>
                             </div>
                             <button type="submit" id="submitBtn" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> 添加课件
@@ -138,6 +138,6 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=2"></script>
+    <script src="js/main.js?v=4"></script>
 </body>
 </html>

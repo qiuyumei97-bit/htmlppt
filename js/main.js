@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'html_courses_data';
+const CONTENT_KEY = 'html_course_contents';
 const DATA_URL = 'data/courses.json';
 const PASSWORD_KEY = 'html_courses_password';
 const AUTH_KEY = 'html_courses_auth';
@@ -38,7 +39,11 @@ async function loadData() {
     try {
         const resp = await fetch(DATA_URL);
         if (resp.ok) {
-            allData = await resp.json();
+            const json = await resp.json();
+            allData = { grades: json.grades || [], courses: json.courses || [] };
+            if (json._htmlContents && typeof json._htmlContents === 'object') {
+                try { localStorage.setItem(CONTENT_KEY, JSON.stringify(json._htmlContents)); } catch (e) { /* ignore */ }
+            }
             saveData();
             return allData;
         }
@@ -66,7 +71,9 @@ function saveData() {
 }
 
 function exportData() {
-    const dataStr = JSON.stringify(allData, null, 2);
+    const contents = JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}');
+    const exportObj = { ...allData, _htmlContents: contents };
+    const dataStr = JSON.stringify(exportObj, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -82,8 +89,13 @@ function importData(file) {
         try {
             const imported = JSON.parse(e.target.result);
             if (imported.grades && imported.courses) {
-                allData = imported;
+                allData = { grades: imported.grades, courses: imported.courses };
                 saveData();
+                if (imported._htmlContents && typeof imported._htmlContents === 'object') {
+                    try { localStorage.setItem(CONTENT_KEY, JSON.stringify(imported._htmlContents)); } catch (err) {
+                        alert('部分课件内容过大，导入不完整');
+                    }
+                }
                 alert('数据导入成功！');
                 location.reload();
             } else {
@@ -99,6 +111,7 @@ function importData(file) {
 function resetData() {
     if (confirm('确定要重置所有数据吗？这将恢复默认数据。')) {
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(CONTENT_KEY);
         allData = JSON.parse(JSON.stringify(DEFAULT_DATA));
         saveData();
         alert('数据已重置！');
@@ -220,10 +233,23 @@ async function initPlayerPage() {
     if (gradeEl) gradeEl.textContent = grade?.name || '未知年级';
 
     const iframe = document.createElement('iframe');
-    iframe.src = course.filePath;
     iframe.className = 'course-iframe';
     iframe.title = course.title;
     iframe.allowFullscreen = true;
+
+    if (course.filePath && course.filePath.startsWith('local://')) {
+        const cid = course.filePath.replace('local://', '');
+        const contents = JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}');
+        const htmlContent = contents[cid];
+        if (htmlContent) {
+            const blob = new Blob([htmlContent], { type: 'text/html; charset=utf-8' });
+            iframe.src = URL.createObjectURL(blob);
+        } else {
+            iframe.srcdoc = '<html><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;color:#999;"><p>课件内容未找到，请在管理后台重新上传</p></body></html>';
+        }
+    } else {
+        iframe.src = course.filePath;
+    }
 
     const contentEl = document.getElementById('courseContent');
     if (contentEl) {
@@ -317,17 +343,46 @@ function setupAddForm() {
         if (editingId) {
             const course = getCourseById(editingId);
             if (course) { course.title = title; course.grade = grade; course.subject = subject; saveData(); alert('课件修改成功'); }
-        } else {
-            if (!files || !files.length) { alert('请选择文件'); return; }
-            allData.courses.push({ id: generateId(), title, grade, subject, createdAt: new Date().toISOString().split('T')[0], filePath: `courses/${grade}/${generateId()}/index.html` });
-            saveData();
-            alert('课件添加成功');
+            form.reset();
+            delete form.dataset.editingId;
+            document.getElementById('formTitle').textContent = '添加课件';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-plus"></i> 添加课件';
+            renderManageCourseList();
+            return;
         }
-        form.reset();
-        delete form.dataset.editingId;
-        document.getElementById('formTitle').textContent = '添加课件';
-        document.getElementById('submitBtn').innerHTML = '<i class="fas fa-plus"></i> 添加课件';
-        renderManageCourseList();
+        if (!files || !files.length) { alert('请选择HTML文件'); return; }
+        const file = files[0];
+        if (!file.name.toLowerCase().endsWith('.html') && !file.name.toLowerCase().endsWith('.htm')) {
+            alert('请选择 .html 格式的课件文件');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const htmlContent = ev.target.result;
+            const courseId = generateId();
+            const contents = JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}');
+            contents[courseId] = htmlContent;
+            try {
+                localStorage.setItem(CONTENT_KEY, JSON.stringify(contents));
+            } catch (err) {
+                alert('课件文件过大，无法存储（localStorage 容量限制）');
+                return;
+            }
+            allData.courses.push({
+                id: courseId,
+                title,
+                grade,
+                subject,
+                createdAt: new Date().toISOString().split('T')[0],
+                filePath: `local://${courseId}`
+            });
+            saveData();
+            alert('课件添加成功！');
+            form.reset();
+            renderManageCourseList();
+        };
+        reader.onerror = () => { alert('文件读取失败，请重试'); };
+        reader.readAsText(file);
     });
 }
 
@@ -384,6 +439,11 @@ function editCourse(id) {
 function deleteCourse(id) {
     if (!confirm('确定要删除这个课件吗？')) return;
     allData.courses = allData.courses.filter(c => c.id !== id);
+    const contents = JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}');
+    if (contents[id]) {
+        delete contents[id];
+        try { localStorage.setItem(CONTENT_KEY, JSON.stringify(contents)); } catch (e) { /* ignore */ }
+    }
     saveData();
     renderManageCourseList();
 }

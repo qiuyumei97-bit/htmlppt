@@ -14,6 +14,7 @@
         {"id": "ai-intro", "title": "初识人工智能", "grade": "grade3", "subject": "信息科技", "createdAt": "2024-01-21", "filePath": "courses/grade3/ai-intro/index.html"},
         {"id": "sample4", "title": "认识方向", "grade": "grade4", "subject": "数学", "createdAt": "2024-01-18", "filePath": "courses/grade4/sample4/index.html"},
         {"id": "sample5", "title": "三角形认识", "grade": "grade5", "subject": "数学", "createdAt": "2024-01-19", "filePath": "courses/grade5/sample5/index.html"},
-        {"id": "sample6", "title": "圆的周长与面积", "grade": "grade6", "subject": "数学", "createdAt": "2024-01-20", "filePath": "courses/grade6/sample6/index.html"}
+        {"id": "sample6", "title": "圆的周长与面积", "grade": "grade6", "subject": "数学", "createdAt": "2024-01-20", "filePath": "courses/grade6/sample6/index.html"},
+        {"id": "bucket-sort", "title": "化大为小桶排序", "grade": "grade5", "subject": "信息科技", "createdAt": "2026-05-09", "filePath": "courses/grade5/bucket-sort/index.html"}
     ]
 }
