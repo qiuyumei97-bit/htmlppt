@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - HTML课件库</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="manage-page">
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <span>HTML课件库</span>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> 首页</a></li>
+                    <li><a href="index.html#grades"><i class="fas fa-layer-group"></i> 年级分类</a></li>
+                    <li><a href="manage.html" class="active"><i class="fas fa-cog"></i> 管理后台</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="manage-section">
+            <div class="container">
+                <h1 class="page-title"><i class="fas fa-cog"></i> 课件管理</h1>
+                
+                <div class="data-actions">
+                    <button id="exportBtn" class="btn btn-secondary">
+                        <i class="fas fa-download"></i> 导出数据
+                    </button>
+                    <button id="importBtn" class="btn btn-secondary">
+                        <i class="fas fa-upload"></i> 导入数据
+                    </button>
+                    <button id="resetBtn" class="btn btn-danger">
+                        <i class="fas fa-undo"></i> 重置数据
+                    </button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                </div>
+                
+                <div class="manage-content">
+                    <div class="form-section">
+                        <h2 id="formTitle">添加课件</h2>
+                        <form id="addCourseForm" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="title">课件名称</label>
+                                <input type="text" id="title" name="title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="grade">年级</label>
+                                <select id="grade" name="grade" required data-grade-select>
+                                    <option value="">请选择年级</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">学科</label>
+                                <input type="text" id="subject" name="subject" required placeholder="如：数学、语文、英语">
+                            </div>
+                            <div class="form-group">
+                                <label for="courseFile">课件文件（.html）</label>
+                                <input type="file" id="courseFile" name="courseFile" accept=".html,.htm">
+                                <p class="help-text">选择做好的 HTML 课件文件上传，系统会自动存储并支持播放与全屏</p>
+                            </div>
+                            <button type="submit" id="submitBtn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> 添加课件
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="table-section">
+                        <h2>课件列表</h2>
+                        <table class="course-table">
+                            <thead>
+                                <tr>
+                                    <th>课件名称</th>
+                                    <th>年级</th>
+                                    <th>学科</th>
+                                    <th>添加时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="courseTableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center">加载中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="manage-content mt-4">
+                    <div class="form-section">
+                        <h2 id="gradeFormTitle">添加年级</h2>
+                        <form id="addGradeForm">
+                            <div class="form-group">
+                                <label for="gradeName">年级名称</label>
+                                <input type="text" id="gradeName" name="gradeName" required placeholder="如：七年级">
+                            </div>
+                            <div class="form-group">
+                                <label for="gradeDescription">年级描述</label>
+                                <input type="text" id="gradeDescription" name="gradeDescription" placeholder="简短描述该年级">
+                            </div>
+                            <button type="submit" id="gradeSubmitBtn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> 添加年级
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="table-section">
+                        <h2>年级列表</h2>
+                        <table class="course-table">
+                            <thead>
+                                <tr>
+                                    <th>年级名称</th>
+                                    <th>描述</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gradeTableBody">
+                                <tr>
+                                    <td colspan="3" class="text-center">加载中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 HTML课件库 - 让教学更简单</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js?v=4"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加法运算入门</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .equation {
+            background: rgba(255,255,255,0.2);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        .equation span {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 0 15px;
+        }
+        .answer-area {
+            margin-top: 30px;
+        }
+        .answer-btn {
+            background: rgba(255,255,255,0.9);
+            color: #11998e;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            margin: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .answer-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .feedback {
+            margin-top: 30px;
+            font-size: 1.5rem;
+            min-height: 2rem;
+        }
+        .correct {
+            color: #ffd700;
+            animation: pulse 0.5s;
+        }
+        .wrong {
+            color: #ff6b6b;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>➕ 加法运算入门</h1>
+        <div class="equation">
+            <span id="num1">3</span>
+            <span>+</span>
+            <span id="num2">5</span>
+            <span>=</span>
+            <span id="result">?</span>
+        </div>
+        <div class="answer-area">
+            <button class="answer-btn" onclick="checkAnswer(7)">7</button>
+            <button class="answer-btn" onclick="checkAnswer(8)">8</button>
+            <button class="answer-btn" onclick="checkAnswer(9)">9</button>
+        </div>
+        <div class="feedback" id="feedback">请选择正确答案</div>
+    </div>
+    <script>
+        const num1 = 3, num2 = 5;
+        const correct = num1 + num2;
+        
+        function checkAnswer(answer) {
+            const feedback = document.getElementById('feedback');
+            const result = document.getElementById('result');
+            
+            if (answer === correct) {
+                feedback.textContent = '🎉 回答正确！太棒了！';
+                feedback.className = 'feedback correct';
+                result.textContent = correct;
+            } else {
+                feedback.textContent = '😅 再试试吧！';
+                feedback.className = 'feedback wrong';
+            }
+        }
+        
+        window.play = function() {
+            const feedback = document.getElementById('feedback');
+            const result = document.getElementById('result');
+            feedback.textContent = '请选择正确答案';
+            feedback.className = 'feedback';
+            result.textContent = '?';
+        };
+        window.pause = function() {};
+        window.prev = function() {};
+        window.next = function() {};
+    </script>
+</body>
+</html>
