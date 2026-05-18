@@ -127,6 +127,14 @@
       "subject": "信息科技",
       "createdAt": "2026-05-18",
       "filePath": "local://mpb1o30wupkdduuu9l"
+    },
+    {
+      "id": "group-task-assignment",
+      "title": "分组分派任务",
+      "grade": "grade3",
+      "subject": "信息科技",
+      "createdAt": "2026-05-18",
+      "filePath": "courses/grade3/group-task-assignment/index.html"
     }
   ],
   "_htmlContents": {
