@@ -45,6 +45,9 @@
                 <div class="manage-content">
                     <div class="form-section">
                         <h2 id="formTitle">添加课件</h2>
+                        <p class="section-desc" style="color:#64748b;font-size:0.9rem;margin-bottom:16px;">
+                            💡 <strong>新流程：</strong>上传后系统会生成 ZIP 包下载，解压到 courses/ 对应年级目录，再运行 <code>generate.bat</code> 即可同步到 Git。
+                        </p>
                         <form id="addCourseForm" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="title">课件名称</label>
@@ -63,12 +66,20 @@
                             <div class="form-group">
                                 <label for="courseFile">课件文件（.html）</label>
                                 <input type="file" id="courseFile" name="courseFile" accept=".html,.htm">
-                                <p class="help-text">选择做好的 HTML 课件文件上传，系统会自动存储并支持播放与全屏</p>
+                                <p class="help-text">选择 HTML 课件文件，提交后将下载一个 ZIP 包（内含 index.html + meta.json）</p>
                             </div>
                             <button type="submit" id="submitBtn" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> 添加课件
+                                <i class="fas fa-download"></i> 生成 ZIP 并下载
                             </button>
                         </form>
+                        <div style="margin-top:20px;padding:16px;background:#f0f9ff;border-radius:8px;font-size:0.85rem;color:#1e40af;line-height:1.8;">
+                            <strong>📋 手动添加课件的步骤：</strong><br>
+                            1️⃣ 在 <code>courses/年级/</code> 下新建课件文件夹<br>
+                            2️⃣ 放入 <code>index.html</code> 课件文件<br>
+                            3️⃣ 创建 <code>meta.json</code>（含 title, subject, createdAt）<br>
+                            4️⃣ 双击运行 <code>generate.bat</code> 重新生成索引<br>
+                            5️⃣ <code>git add . && git commit -m "新增课件" && git push</code>
+                        </div>
                     </div>
 
                     <div class="table-section">

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线安全防范 - 三年级信息科技</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(10px, 2vw, 30px);
+        }
+        .slide-container {
+            width: 100%; max-width: 1100px;
+            background: white; border-radius: clamp(12px, 2vw, 20px);
+            box-shadow: 0 clamp(10px, 2vw, 30px) clamp(20px, 4vw, 60px) rgba(0,0,0,0.3);
+            overflow: hidden; display: flex; flex-direction: column;
+            min-height: clamp(500px, 75vh, 700px);
+        }
+        .slide-header {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white; padding: clamp(10px, 1.5vw, 18px) clamp(16px, 2vw, 28px);
+            display: flex; align-items: center; gap: clamp(6px, 1vw, 14px);
+        }
+        .slide-header .badge {
+            background: rgba(255,255,255,0.2); padding: 4px 12px;
+            border-radius: 20px; font-size: clamp(10px, 0.9vw, 12px); font-weight: 600;
+        }
+        .slide-header h2 { font-size: clamp(13px, 1.3vw, 17px); font-weight: 600; flex: 1; }
+        .slide-header .grade {
+            background: #f59e0b; color: #1e293b; padding: 3px 10px;
+            border-radius: 12px; font-size: clamp(10px, 0.9vw, 12px); font-weight: 700;
+        }
+        .slide-body {
+            flex: 1; padding: clamp(16px, 2.5vw, 40px) clamp(20px, 3vw, 48px);
+            overflow-y: auto; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .slide-footer {
+            background: #f8fafc; border-top: 1px solid #e2e8f0;
+            padding: clamp(8px, 1vw, 14px) clamp(14px, 2vw, 28px);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-btn {
+            background: linear-gradient(135deg, #3b82f6, #7c3aed);
+            color: white; border: none; padding: clamp(8px, 1vw, 12px) clamp(14px, 1.8vw, 24px);
+            border-radius: clamp(6px, 0.8vw, 10px); font-size: clamp(11px, 1vw, 14px);
+            cursor: pointer; font-weight: 600; transition: all 0.2s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+        .nav-btn:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; }
+        .page-indicator { display: flex; align-items: center; gap: 5px; }
+        .page-dot {
+            width: clamp(7px, 0.8vw, 10px); height: clamp(7px, 0.8vw, 10px);
+            border-radius: 50%; background: #cbd5e1; transition: all 0.3s; cursor: pointer;
+        }
+        .page-dot.active { background: #3b82f6; transform: scale(1.3); }
+        .page-num { font-size: clamp(10px, 0.9vw, 13px); color: #64748b; font-weight: 600; margin: 0 6px; }
+        .page { display: none; width: 100%; text-align: center; }
+        .page.active { display: block; animation: fadeIn 0.35s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 封面 */
+        .cover-icon { font-size: clamp(48px, 7vw, 80px); color: #3b82f6; margin-bottom: clamp(10px, 1.2vw, 20px); }
+        .cover-title { font-size: clamp(22px, 3vw, 40px); font-weight: 800; color: #1e293b; margin-bottom: 6px; }
+        .cover-subtitle { font-size: clamp(14px, 1.5vw, 20px); color: #64748b; margin-bottom: clamp(14px, 1.8vw, 28px); }
+        .cover-meta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .cover-tag { background: #eff6ff; color: #3b82f6; padding: 6px 16px; border-radius: 20px; font-size: clamp(11px, 1vw, 14px); font-weight: 600; }
+
+        /* 页面标题 */
+        .page-title { font-size: clamp(18px, 2.2vw, 28px); font-weight: 800; color: #1e293b; margin-bottom: clamp(14px, 2vw, 28px); }
+        .page-title i { color: #3b82f6; margin-right: 6px; }
+
+        /* 学习目标卡片 */
+        .objective-cards { display: flex; flex-wrap: wrap; gap: clamp(12px, 1.5vw, 20px); justify-content: center; max-width: 900px; width: 100%; }
+        .obj-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: clamp(10px, 1.2vw, 16px); padding: clamp(14px, 1.5vw, 24px); text-align: center; flex: 1; min-width: clamp(170px, 20vw, 230px); max-width: 270px; transition: all 0.2s; }
+        .obj-card:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .obj-card .obj-icon { font-size: clamp(28px, 3vw, 44px); margin-bottom: clamp(6px, 0.8vw, 12px); }
+        .obj-card:nth-child(1) .obj-icon { color: #f59e0b; }
+        .obj-card:nth-child(2) .obj-icon { color: #3b82f6; }
+        .obj-card:nth-child(3) .obj-icon { color: #22c55e; }
+        .obj-card:nth-child(4) .obj-icon { color: #8b5cf6; }
+        .obj-card h4 { font-size: clamp(12px, 1.1vw, 16px); color: #1e293b; margin-bottom: 4px; }
+        .obj-card p { font-size: clamp(10px, 0.9vw, 13px); color: #64748b; line-height: 1.5; }
+
+        /* 情境框 */
+        .scene-box { background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #f59e0b; border-radius: clamp(8px, 1vw, 14px); padding: clamp(14px, 1.8vw, 24px) clamp(16px, 2vw, 28px); text-align: left; max-width: 780px; width: 100%; }
+        .scene-box h3 { color: #92400e; font-size: clamp(14px, 1.4vw, 18px); }
+        .scene-box p { color: #78350f; font-size: clamp(12px, 1vw, 15px); line-height: 1.7; margin-top: 8px; }
+        .big-question { background: #fef9c3; border: 2px dashed #f59e0b; border-radius: 8px; padding: 10px 16px; margin-top: 10px; font-size: clamp(13px, 1.2vw, 17px); color: #92400e; font-weight: 700; text-align: center; }
+        .think-bubble { background: #fef3c7; border-radius: 12px; padding: clamp(8px, 1vw, 14px) clamp(12px, 1.2vw, 18px); max-width: 780px; width: 100%; text-align: left; margin-top: clamp(8px, 1vw, 14px); font-size: clamp(11px, 0.9vw, 14px); color: #78350f; }
+
+        /* 知识点卡片网格 */
+        .why-cards { display: flex; flex-wrap: wrap; gap: clamp(10px, 1.2vw, 16px); justify-content: center; max-width: 850px; width: 100%; }
+        .why-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: clamp(8px, 1vw, 14px); padding: clamp(12px, 1.2vw, 20px); text-align: center; flex: 1; min-width: clamp(140px, 16vw, 200px); max-width: 220px; transition: all 0.2s; }
+        .why-card:hover { border-color: #3b82f6; transform: translateY(-2px); }
+        .why-card .w-icon { font-size: clamp(26px, 2.5vw, 36px); margin-bottom: 6px; color: #3b82f6; }
+        .why-card h4 { font-size: clamp(11px, 1vw, 14px); color: #1e293b; margin-bottom: 4px; }
+        .why-card p { font-size: clamp(10px, 0.8vw, 12px); color: #64748b; line-height: 1.5; }
+
+        /* risk cards with colored tops */
+        .risk-cards { display: flex; flex-wrap: wrap; gap: clamp(10px, 1.2vw, 16px); justify-content: center; max-width: 900px; width: 100%; }
+        .risk-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: clamp(10px, 1.2vw, 16px); padding: clamp(12px, 1.2vw, 20px); text-align: center; flex: 1; min-width: clamp(150px, 18vw, 210px); max-width: 250px; transition: all 0.2s; }
+        .risk-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        .risk-card:nth-child(1) { border-top: 4px solid #ef4444; }
+        .risk-card:nth-child(2) { border-top: 4px solid #f59e0b; }
+        .risk-card:nth-child(3) { border-top: 4px solid #8b5cf6; }
+        .risk-card:nth-child(4) { border-top: 4px solid #ec4899; }
+        .risk-card .rc-icon { font-size: clamp(28px, 3vw, 44px); margin-bottom: 6px; }
+        .risk-card:nth-child(1) .rc-icon { color: #ef4444; }
+        .risk-card:nth-child(2) .rc-icon { color: #f59e0b; }
+        .risk-card:nth-child(3) .rc-icon { color: #8b5cf6; }
+        .risk-card:nth-child(4) .rc-icon { color: #ec4899; }
+        .risk-card h4 { font-size: clamp(12px, 1vw, 15px); color: #1e293b; }
+        .risk-card p { font-size: clamp(10px, 0.8vw, 12px); color: #64748b; margin-top: 4px; line-height: 1.4; }
+
+        /* 活动框 */
+        .activity-box { padding: clamp(14px, 1.5vw, 22px) clamp(16px, 2vw, 28px); border-radius: clamp(8px, 1vw, 14px); border: 2px solid; max-width: 850px; width: 100%; text-align: left; margin-bottom: clamp(10px, 1.2vw, 16px); }
+        .activity-result { font-size: clamp(11px, 1vw, 14px); font-weight: 700; min-height: 22px; margin-top: 6px; text-align: center; }
+
+        /* 讨论选择 */
+        .discuss-choice { padding: 6px 14px; border: 2px solid #cbd5e1; border-radius: 20px; background: white; cursor: pointer; font-size: clamp(10px, 0.9vw, 13px); color: #475569; font-family: inherit; transition: all 0.2s; }
+
+        /* 场景判断活动 */
+        .scene-card { background: white; border: 2px solid #e2e8f0; border-radius: 10px; padding: clamp(10px, 1.2vw, 18px); text-align: left; margin-bottom: 10px; display: flex; align-items: center; gap: clamp(8px, 1vw, 14px); flex-wrap: wrap; }
+        .scene-card .sc-text { flex: 1; min-width: 200px; font-size: clamp(11px, 1vw, 14px); color: #334155; }
+        .scene-card .sc-num { width: 28px; height: 28px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #64748b; flex-shrink: 0; font-size: 12px; }
+        .scene-card.judged-safe { border-left: 4px solid #22c55e; }
+        .scene-card.judged-danger { border-left: 4px solid #ef4444; }
+        .scene-card.judged-safe .sc-num { background: #22c55e; color: white; }
+        .scene-card.judged-danger .sc-num { background: #ef4444; color: white; }
+        .judge-btn { padding: 5px 16px; border: 2px solid; border-radius: 16px; cursor: pointer; font-size: clamp(10px, 0.8vw, 12px); font-weight: 600; font-family: inherit; transition: all 0.2s; }
+        .judge-safe { border-color: #22c55e; color: #22c55e; background: white; }
+        .judge-safe:hover { background: #22c55e; color: white; }
+        .judge-danger { border-color: #ef4444; color: #ef4444; background: white; }
+        .judge-danger:hover { background: #ef4444; color: white; }
+        .scene-card.judged-safe .judge-safe { background: #22c55e; color: white; }
+        .scene-card.judged-danger .judge-danger { background: #ef4444; color: white; }
+        .scene-card .judge-btns { display: flex; gap: 8px; }
+
+        /* 密码小课堂 */
+        .pwd-compare { display: flex; flex-wrap: wrap; gap: clamp(12px, 1.5vw, 20px); justify-content: center; max-width: 800px; width: 100%; margin-bottom: clamp(10px, 1.2vw, 16px); }
+        .pwd-col { flex: 1; min-width: 220px; max-width: 380px; border-radius: clamp(8px, 1vw, 14px); padding: clamp(12px, 1.2vw, 20px); }
+        .pwd-weak { background: #fef2f2; border: 2px solid #fca5a5; }
+        .pwd-strong { background: #f0fdf4; border: 2px solid #86efac; }
+        .pwd-col h4 { font-size: clamp(13px, 1.2vw, 17px); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .pwd-weak h4 { color: #dc2626; }
+        .pwd-strong h4 { color: #16a34a; }
+        .pwd-col ul { list-style: none; text-align: left; font-size: clamp(10px, 0.9vw, 13px); color: #475569; line-height: 1.8; }
+        .pwd-col ul li::before { content: '• '; font-weight: 700; }
+        .pwd-weak ul li::before { color: #dc2626; }
+        .pwd-strong ul li::before { color: #16a34a; }
+
+        /* 密码输入 */
+        .pwd-input-area { max-width: 600px; width: 100%; }
+        .pwd-input-area input {
+            width: 100%; padding: clamp(10px, 1vw, 14px); font-size: clamp(13px, 1.1vw, 16px);
+            border: 2px solid #e2e8f0; border-radius: 8px; text-align: center;
+            font-family: 'Courier New', monospace; letter-spacing: 3px;
+            margin-bottom: 10px; transition: border-color 0.2s; outline: none;
+        }
+        .pwd-input-area input:focus { border-color: #3b82f6; }
+        .check-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none;
+            padding: clamp(10px, 1vw, 14px) clamp(20px, 2vw, 32px); border-radius: 8px;
+            font-size: clamp(12px, 1vw, 15px); font-weight: 700; cursor: pointer;
+            font-family: inherit; transition: all 0.2s; margin-bottom: 8px;
+        }
+        .check-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(34,197,94,0.3); }
+        .pwd-hints { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
+        .pwd-hint { padding: 4px 12px; border-radius: 16px; font-size: clamp(9px, 0.7vw, 11px); background: #f1f5f9; color: #94a3b8; font-weight: 600; transition: all 0.3s; }
+        .pwd-hint.pass { background: #dcfce7; color: #16a34a; }
+
+        /* 策略列表 */
+        .strategy-list { max-width: 780px; width: 100%; }
+        .strategy-item { background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; padding: clamp(10px, 1.2vw, 16px) clamp(12px, 1.5vw, 20px); text-align: left; margin-bottom: clamp(8px, 1vw, 12px); display: flex; align-items: center; gap: 10px; }
+        .strategy-item .s-num { width: clamp(26px, 2.8vw, 34px); height: clamp(26px, 2.8vw, 34px); background: #3b82f6; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; font-size: clamp(12px, 1vw, 15px); }
+        .strategy-item .s-content { font-size: clamp(11px, 1vw, 14px); color: #1e40af; line-height: 1.5; }
+
+        /* 总结 */
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 18vw, 200px), 1fr)); gap: clamp(10px, 1.2vw, 16px); width: 100%; max-width: 850px; }
+        .summary-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: clamp(8px, 1vw, 14px); padding: clamp(12px, 1.2vw, 20px); text-align: center; transition: all 0.2s; }
+        .summary-card:hover { border-color: #3b82f6; transform: translateY(-2px); }
+        .summary-card .s-icon { font-size: clamp(28px, 2.5vw, 38px); margin-bottom: 6px; color: #3b82f6; }
+        .summary-card h4 { font-size: clamp(12px, 1vw, 15px); color: #1e293b; margin-bottom: 4px; }
+        .summary-card p { font-size: clamp(10px, 0.8vw, 12px); color: #64748b; line-height: 1.5; }
+
+        @media (max-width: 600px) {
+            .why-cards, .risk-cards, .objective-cards { flex-direction: column; align-items: center; }
+            .why-card, .risk-card, .obj-card { max-width: 100%; width: 100%; }
+            .pwd-compare { flex-direction: column; }
+            .scene-card { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide-header">
+            <span class="badge"><i class="fas fa-shield-haltered"></i> 第三单元 · 在线安全</span>
+            <h2>第1课 · 在线安全防范</h2>
+            <span class="grade">三年级</span>
+        </div>
+
+        <div class="slide-body">
+
+            <!-- 第0页：封面 -->
+            <div class="page active" data-page="0">
+                <div class="cover-icon"><i class="fas fa-shield-haltered"></i></div>
+                <div class="cover-title">在线安全防范</div>
+                <div class="cover-subtitle">做自己的数字安全小卫士</div>
+                <div class="cover-meta">
+                    <span class="cover-tag"><i class="fas fa-graduation-cap"></i> 三年级 信息科技</span>
+                    <span class="cover-tag"><i class="fas fa-cubes"></i> 第三单元 · 在线安全</span>
+                    <span class="cover-tag"><i class="fas fa-heart"></i> 信息社会责任</span>
+                </div>
+            </div>
+
+            <!-- 第1页：学习目标 -->
+            <div class="page" data-page="1">
+                <div class="page-title"><i class="fas fa-bullseye"></i> 学习目标</div>
+                <div class="objective-cards">
+                    <div class="obj-card">
+                        <div class="obj-icon"><i class="fas fa-id-card"></i></div>
+                        <h4>认识个人信息</h4>
+                        <p>了解个人信息的种类，知道泄露个人信息的危害，增强保护意识。</p>
+                    </div>
+                    <div class="obj-card">
+                        <div class="obj-icon"><i class="fas fa-search"></i></div>
+                        <h4>识别网络风险</h4>
+                        <p>能辨别常见在线风险（陌生链接、虚假信息、不良弹窗等），学会主动防范。</p>
+                    </div>
+                    <div class="obj-card">
+                        <div class="obj-icon"><i class="fas fa-lock"></i></div>
+                        <h4>掌握防护技能</h4>
+                        <p>学会设置安全密码、保护个人账号，掌握基本的在线安全防护方法。</p>
+                    </div>
+                    <div class="obj-card">
+                        <div class="obj-icon"><i class="fas fa-handshake"></i></div>
+                        <h4>树立安全观念</h4>
+                        <p>养成文明上网好习惯，知道遇到问题及时求助老师或家长。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第2页：情境导入 -->
+            <div class="page" data-page="2">
+                <div class="page-title"><i class="fas fa-book-open"></i> 情境导入</div>
+                <div class="scene-box">
+                    <h3><i class="fas fa-gamepad"></i> 数字城市的"惊喜"消息</h3>
+                    <p>周末，小华正用平板电脑浏览网页，突然屏幕上弹出一条消息：</p>
+                    <p style="background:#fff;padding:10px 16px;border-radius:8px;margin:8px 0;font-style:italic;">
+                        🎉 <strong>恭喜你！</strong>你是第 9999 位幸运访客！<br>
+                        免费领取限量版游戏皮肤！<br>
+                        只需填写你的<strong>姓名和爸爸妈妈的手机号</strong>就可以领取啦！
+                    </p>
+                    <div class="big-question">
+                        <i class="fas fa-question-circle"></i> 小华该怎么办？这条消息可信吗？为什么？
+                    </div>
+                </div>
+                <div class="think-bubble">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>想一想：</span>你有没有遇到过类似的情况？如果是你，你会怎么做？
+                </div>
+            </div>
+
+            <!-- 第3页：认识个人信息 -->
+            <div class="page" data-page="3">
+                <div class="page-title"><i class="fas fa-id-card"></i> 认识个人信息</div>
+                <div class="why-cards" style="margin-bottom:clamp(14px,1.5vw,22px);">
+                    <div class="why-card">
+                        <div class="w-icon"><i class="fas fa-user"></i></div>
+                        <h4>基本资料</h4>
+                        <p>姓名、年龄、学校班级、家庭住址</p>
+                    </div>
+                    <div class="why-card">
+                        <div class="w-icon"><i class="fas fa-phone"></i></div>
+                        <h4>联系方式</h4>
+                        <p>电话号码、爸爸妈妈的手机号</p>
+                    </div>
+                    <div class="why-card">
+                        <div class="w-icon"><i class="fas fa-image"></i></div>
+                        <h4>生物信息</h4>
+                        <p>指纹、面部照片、声音</p>
+                    </div>
+                    <div class="why-card">
+                        <div class="w-icon"><i class="fas fa-key"></i></div>
+                        <h4>账号密码</h4>
+                        <p>各种APP、网站的登录密码</p>
+                    </div>
+                </div>
+                <div class="risk-cards">
+                    <div class="risk-card">
+                        <div class="rc-icon"><i class="fas fa-phone-volume"></i></div>
+                        <h4>骚扰不停</h4>
+                        <p>信息泄露后会收到无数推销电话和垃圾短信</p>
+                    </div>
+                    <div class="risk-card">
+                        <div class="rc-icon"><i class="fas fa-user-secret"></i></div>
+                        <h4>身份冒充</h4>
+                        <p>坏人用你的信息假冒你，骗你的家人和朋友</p>
+                    </div>
+                    <div class="risk-card">
+                        <div class="rc-icon"><i class="fas fa-coins"></i></div>
+                        <h4>钱财损失</h4>
+                        <p>骗子利用信息设计骗局，骗取你家的钱财</p>
+                    </div>
+                    <div class="risk-card">
+                        <div class="rc-icon"><i class="fas fa-house-damage"></i></div>
+                        <h4>人身危险</h4>
+                        <p>住址泄露后，坏人可能找上门来</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第4页：识别网络风险 -->
+            <div class="page" data-page="4">
+                <div class="page-title"><i class="fas fa-exclamation-triangle"></i> 网络中的四种"小怪兽"</div>
+                <div class="risk-cards">
+                    <div class="risk-card">
+                        <div class="rc-icon"><i class="fas fa-link-slash"></i></div>
+                        <h4>陌生链接</h4>
+                        <p>来历不明的网址，点击可能中病毒或跳转到诈骗网站。</p>
+                    </div>
+                    <div class="risk-card">
+                        <div class="rc-icon"><i class="fas fa-user-plus"></i></div>
+                        <h4>陌生好友</h4>
+                        <p>不认识的人加你为好友，可能假冒同龄人骗取信任。</p>
+                    </div>
+                    <div class="risk-card">
+                        <div class="rc-icon"><i class="fas fa-gift"></i></div>
+                        <h4>虚假福利</h4>
+                        <p>声称"免费领取""恭喜中奖"，诱导填写个人信息。</p>
+                    </div>
+                    <div class="risk-card">
+                        <div class="rc-icon"><i class="fas fa-window-maximize"></i></div>
+                        <h4>弹窗广告</h4>
+                        <p>突然弹出的广告窗口，"关闭"按钮可能是陷阱入口。</p>
+                    </div>
+                </div>
+                <div style="margin-top:clamp(12px,1.5vw,22px);max-width:780px;width:100%;text-align:left;">
+                    <div class="strategy-list">
+                        <div class="strategy-item">
+                            <span class="s-num">1</span>
+                            <span class="s-content"><strong>停一停！</strong> —— 遇到诱人消息，先不要急着点</span>
+                        </div>
+                        <div class="strategy-item">
+                            <span class="s-num">2</span>
+                            <span class="s-content"><strong>想一想！</strong> —— 这条信息是真的吗？它要我提供什么？</span>
+                        </div>
+                        <div class="strategy-item">
+                            <span class="s-num">3</span>
+                            <span class="s-content"><strong>问一问！</strong> —— 不确定的时候，一定要问老师或爸爸妈妈</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第5页：活动一 - 安全判断挑战 -->
+            <div class="page" data-page="5">
+                <div class="page-title"><i class="fas fa-clipboard-check"></i> 课堂活动一：安全判断挑战</div>
+                <div class="activity-box" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #22c55e;">
+                    <h3 style="color: #166534;"><i class="fas fa-gavel"></i> 判断下面的场景是否安全？</h3>
+                    <p style="color:#166534;font-size:clamp(10px,0.8vw,12px);margin-bottom:8px;">点击 <b style="color:#22c55e;">安全</b> 或 <b style="color:#ef4444;">危险</b> 来判断！</p>
+
+                    <div class="scene-card" id="scene1">
+                        <span class="sc-num">1</span>
+                        <span class="sc-text">陌生网友在游戏里加你好友，说要送你免费皮肤，只需要告诉他爸爸妈妈的手机号。</span>
+                        <span class="judge-btns">
+                            <button class="judge-btn judge-safe" onclick="judgeScene('scene1','safe','正确！这很危险！不能相信陌生人索要信息的请求。')">安全</button>
+                            <button class="judge-btn judge-danger" onclick="judgeScene('scene1','danger','正确！<b>不能</b>把家人的手机号告诉网络上的陌生人！')">危险</button>
+                        </span>
+                    </div>
+
+                    <div class="scene-card" id="scene2">
+                        <span class="sc-num">2</span>
+                        <span class="sc-text">老师在班级群里发了一条关于明天交作业的通知，没有要求提供任何个人信息。</span>
+                        <span class="judge-btns">
+                            <button class="judge-btn judge-safe" onclick="judgeScene('scene2','safe','正确！这是班级群里的正常通知，没有索要个人信息。')">安全</button>
+                            <button class="judge-btn judge-danger" onclick="judgeScene('scene2','danger','不对哦！班级群里老师发的正常通知是安全的。')">危险</button>
+                        </span>
+                    </div>
+
+                    <div class="scene-card" id="scene3">
+                        <span class="sc-num">3</span>
+                        <span class="sc-text">网页弹出一个窗口："恭喜您中了一等奖！点击领取，填写身份证号和银行卡号即可到账！"</span>
+                        <span class="judge-btns">
+                            <button class="judge-btn judge-safe" onclick="judgeScene('scene3','safe','不对！这明显是诈骗信息，不能填写个人信息！')">安全</button>
+                            <button class="judge-btn judge-danger" onclick="judgeScene('scene3','danger','正确！要填写银行卡和身份证号的"中奖"一定是诈骗！')">危险</button>
+                        </span>
+                    </div>
+
+                    <div class="scene-card" id="scene4">
+                        <span class="sc-num">4</span>
+                        <span class="sc-text">你在正规的学习网站上搜索"动物的冬眠"资料，网站没有弹出广告，也没有索要信息。</span>
+                        <span class="judge-btns">
+                            <button class="judge-btn judge-safe" onclick="judgeScene('scene4','safe','正确！在正规网站搜索学习资料是安全的。')">安全</button>
+                            <button class="judge-btn judge-danger" onclick="judgeScene('scene4','danger','不对哦！正规网站搜索学习资料是安全的。')">危险</button>
+                        </span>
+                    </div>
+
+                    <div class="activity-result" id="judgeResult"></div>
+                </div>
+            </div>
+
+            <!-- 第6页：安全密码小课堂 -->
+            <div class="page" data-page="6">
+                <div class="page-title"><i class="fas fa-lock"></i> 密码——数字世界的"钥匙"</div>
+                <div class="pwd-compare">
+                    <div class="pwd-col pwd-weak">
+                        <h4><i class="fas fa-times-circle"></i> 弱密码（很容易被破解！）</h4>
+                        <ul>
+                            <li>123456、abcdef</li>
+                            <li>自己的生日，如 20150901</li>
+                            <li>爸爸妈妈的电话号码</li>
+                            <li>和昵称一样的密码</li>
+                            <li>太短的密码（少于8位）</li>
+                        </ul>
+                    </div>
+                    <div class="pwd-col pwd-strong">
+                        <h4><i class="fas fa-check-circle"></i> 强密码（很难被破解！）</h4>
+                        <ul>
+                            <li>A7$sK9p@Lq（大小写+数字+符号）</li>
+                            <li>Miao@2026（字母+数字+符号）</li>
+                            <li>XiaoP@nd@2024</li>
+                            <li>G2#mD5z（够杂够长）</li>
+                            <li>至少 8 位，越长越安全</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="max-width:780px;width:100%;text-align:left;">
+                    <div class="strategy-list">
+                        <div class="strategy-item">
+                            <span class="s-num" style="background:#22c55e;">1</span>
+                            <span class="s-content"><strong>够长</strong> —— 密码长度至少 <b>8 位</b>以上</span>
+                        </div>
+                        <div class="strategy-item">
+                            <span class="s-num" style="background:#f59e0b;">2</span>
+                            <span class="s-content"><strong>够杂</strong> —— 包含大小写字母 + 数字 + 特殊符号</span>
+                        </div>
+                        <div class="strategy-item">
+                            <span class="s-num" style="background:#ef4444;">3</span>
+                            <span class="s-content"><strong>不泄露</strong> —— 不告诉别人，不同网站用不同密码</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第7页：活动二 - 设计安全密码 -->
+            <div class="page" data-page="7">
+                <div class="page-title"><i class="fas fa-pencil-alt"></i> 课堂活动二：设计安全密码</div>
+                <div class="activity-box" style="background: linear-gradient(135deg, #faf5ff, #f3e8ff); border-color: #8b5cf6;">
+                    <h3 style="color: #6b21a8;"><i class="fas fa-key"></i> 来试试设计一个"强密码"吧！</h3>
+                    <p style="color:#7c3aed;font-size:clamp(10px,0.8vw,12px);margin-bottom:8px;">输入你设计的密码，点击"检查密码"看看是否符合三要素！</p>
+                    <div class="pwd-input-area">
+                        <input type="text" id="pwdInput" placeholder="请输入你设计的密码..." maxlength="30">
+                        <button class="check-btn" onclick="checkPassword()"><i class="fas fa-search"></i> 检查密码</button>
+                        <div class="pwd-hints">
+                            <span class="pwd-hint" id="hintLen">8位以上</span>
+                            <span class="pwd-hint" id="hintUpper">有大写字母</span>
+                            <span class="pwd-hint" id="hintLower">有小写字母</span>
+                            <span class="pwd-hint" id="hintDigit">有数字</span>
+                            <span class="pwd-hint" id="hintSymbol">有符号</span>
+                        </div>
+                    </div>
+                    <div class="activity-result" id="pwdResult"></div>
+                </div>
+            </div>
+
+            <!-- 第8页：知识总结 -->
+            <div class="page" data-page="8">
+                <div class="page-title"><i class="fas fa-clipboard-check"></i> 知识总结</div>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="s-icon"><i class="fas fa-id-card"></i></div>
+                        <h4>保护个人信息</h4>
+                        <p>姓名、电话、住址、密码都是重要信息，不能随便告诉网络上的陌生人。</p>
+                    </div>
+                    <div class="summary-card">
+                        <div class="s-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <h4>学会识别风险</h4>
+                        <p>陌生链接不点击、陌生好友不添加、中奖信息不轻信、弹窗广告不理会。</p>
+                    </div>
+                    <div class="summary-card">
+                        <div class="s-icon"><i class="fas fa-lock"></i></div>
+                        <h4>设置安全密码</h4>
+                        <p>密码要够长、够杂、不泄露，做到"字母+数字+符号"组合。</p>
+                    </div>
+                    <div class="summary-card">
+                        <div class="s-icon"><i class="fas fa-hands-helping"></i></div>
+                        <h4>学会主动求助</h4>
+                        <p>遇到不确定的事情，停一停、想一想、问一问老师和爸爸妈妈。</p>
+                    </div>
+                </div>
+                <div class="think-bubble" style="background:#eff6ff;border:2px solid #93c5fd;text-align:center;margin-top:clamp(12px,1.5vw,22px);">
+                    <span style="color:#1e40af;font-size:clamp(13px,1.2vw,17px);font-weight:700;">
+                        <i class="fas fa-quote-left"></i> 网络世界很精彩，安全防范记心间！ <i class="fas fa-quote-right"></i>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="slide-footer">
+            <button class="nav-btn" id="prevBtn" disabled>
+                <i class="fas fa-arrow-left"></i> 上一页
+            </button>
+            <div class="page-indicator" id="pageIndicator"></div>
+            <button class="nav-btn" id="nextBtn">
+                下一页 <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        var currentPage = 0;
+        var totalPages = 9;
+        var isAnimating = false;
+
+        function updateNav() {
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages - 1;
+            document.querySelectorAll('.page').forEach(function(p, i) {
+                p.classList.toggle('active', i === currentPage);
+            });
+            var dots = '';
+            for (var i = 0; i < totalPages; i++) {
+                dots += '<span class="page-dot' + (i === currentPage ? ' active' : '') + '" data-page="' + i + '"></span>';
+            }
+            document.getElementById('pageIndicator').innerHTML = dots + '<span class="page-num">' + (currentPage + 1) + ' / ' + totalPages + '</span>';
+            document.querySelectorAll('.page-dot').forEach(function(d) {
+                d.addEventListener('click', function() { goToPage(parseInt(this.dataset.page)); });
+            });
+        }
+
+        function goToPage(n) {
+            if (n < 0 || n >= totalPages || isAnimating) return;
+            isAnimating = true;
+            currentPage = n;
+            updateNav();
+            setTimeout(function() { isAnimating = false; }, 350);
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', function() { goToPage(currentPage - 1); });
+        document.getElementById('nextBtn').addEventListener('click', function() { goToPage(currentPage + 1); });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') goToPage(currentPage + 1);
+            if (e.key === 'ArrowLeft') goToPage(currentPage - 1);
+            if (e.key === 'Home') goToPage(0);
+            if (e.key === 'End') goToPage(totalPages - 1);
+        });
+
+        // 活动一：场景判断
+        var judgedCount = 0;
+        function judgeScene(sceneId, choice, feedback) {
+            var card = document.getElementById(sceneId);
+            if (card.classList.contains('judged-safe') || card.classList.contains('judged-danger')) return;
+            judgedCount++;
+            if (choice === 'safe') {
+                card.classList.add('judged-safe');
+            } else {
+                card.classList.add('judged-danger');
+            }
+            var resultEl = document.getElementById('judgeResult');
+            resultEl.innerHTML = '<span style="color:' + (choice === 'safe' ? '#16a34a' : '#dc2626') + ';">' + feedback + '</span>';
+            if (judgedCount >= 4) {
+                resultEl.innerHTML = '<span style="color:#22c55e;"><i class="fas fa-trophy"></i> 太棒了！你完成了全部判断挑战！你是合格的安全小卫士！</span>';
+            }
+        }
+
+        // 活动二：密码检查
+        function checkPassword() {
+            var pwd = document.getElementById('pwdInput').value;
+            var hasLen = pwd.length >= 8;
+            var hasUpper = /[A-Z]/.test(pwd);
+            var hasLower = /[a-z]/.test(pwd);
+            var hasDigit = /[0-9]/.test(pwd);
+            var hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(pwd);
+
+            document.getElementById('hintLen').classList.toggle('pass', hasLen);
+            document.getElementById('hintUpper').classList.toggle('pass', hasUpper);
+            document.getElementById('hintLower').classList.toggle('pass', hasLower);
+            document.getElementById('hintDigit').classList.toggle('pass', hasDigit);
+            document.getElementById('hintSymbol').classList.toggle('pass', hasSymbol);
+
+            var resultEl = document.getElementById('pwdResult');
+            if (!pwd) {
+                resultEl.innerHTML = '<span style="color:#f59e0b;"><i class="fas fa-exclamation-circle"></i> 请先输入一个密码！</span>';
+            } else if (hasLen && hasUpper && hasLower && hasDigit && hasSymbol) {
+                resultEl.innerHTML = '<span style="color:#22c55e;"><i class="fas fa-trophy"></i> 恭喜！你设计的密码非常安全！是真正的强密码！</span>';
+            } else {
+                var missing = [];
+                if (!hasLen) missing.push('不够8位');
+                if (!hasUpper) missing.push('缺少大写字母');
+                if (!hasLower) missing.push('缺少小写字母');
+                if (!hasDigit) missing.push('缺少数字');
+                if (!hasSymbol) missing.push('缺少符号');
+                resultEl.innerHTML = '<span style="color:#f59e0b;"><i class="fas fa-exclamation-triangle"></i> 还需要改进：' + missing.join('，') + '</span>';
+            }
+        }
+
+        updateNav();
+
+        window.play = function() { goToPage(0); };
+        window.pause = function() {};
+        window.prev = function() { goToPage(currentPage - 1); };
+        window.next = function() { goToPage(currentPage + 1); };
+    </script>
+</body>
+</html>
